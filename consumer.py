@@ -1,9 +1,11 @@
 import pika
 import time
 from LogCleaner import lemmatize_word
+from UIPathApiCalls import ApiHandler
 
 class consumer:
     def __init__(self):
+        self.orchestrator = ApiHandler()
         credentials = pika.PlainCredentials('admin', '123456')
         self.parameters = pika.ConnectionParameters('192.168.145.128', 5672, '/', credentials)
 
@@ -19,9 +21,10 @@ class consumer:
     def callback(self, ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
         message = body.decode("utf-8")
-        print("this message is in callback: ", message)
-        print("this message type in callback: ", type(message))
-        print(lemmatize_word(message.splitlines()[0]))
+        print(self.orchestrator.SendLogToOrchestration(message))
+        #print("this message is in callback: ", message)
+        #print("this message type in callback: ", type(message))
+        #print(lemmatize_word(message.splitlines()[0]))
         #time.sleep(body.count(b'.'))
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)

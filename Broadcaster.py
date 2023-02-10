@@ -1,8 +1,9 @@
 import pika
+
 class RabbitMQ:
     def __init__(self):
-            credentials = pika.PlainCredentials('admin', '123456')
-            self.parameters = pika.ConnectionParameters('192.168.145.128', 5672, '/', credentials)
+        credentials = pika.PlainCredentials('admin', '123456')
+        self.parameters = pika.ConnectionParameters('192.168.145.128', 5672, '/', credentials)
 
     def sendtomq(self, exchange_name, routing_key, msg_body):
         connection = pika.BlockingConnection(self.parameters)

@@ -14,11 +14,14 @@ this message type in callback:  <class 'str'>
 '''
 
 def lemmatize_word(text):
+    print(type(text))
+    print(text)
     word_tokens = word_tokenize(text)
     # provide context i.e. part-of-speech
     lemmas = [lemmatizer.lemmatize(word, pos ='v') for word in word_tokens]
     return lemmas
 
-# if __name__ == '__main__':
-#     print(lemmatize_word(string.splitlines()[]))
+
+#if __name__ == '__main__':
+#    print(lemmatize_word(string.splitlines()))
 
