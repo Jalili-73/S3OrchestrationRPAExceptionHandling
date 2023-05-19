@@ -2,10 +2,14 @@ import pika
 import time
 from LogCleaner import lemmatize_word
 from UIPathApiCalls import ApiHandler
+from S3_algorithm import S3Orchestrator
+from DataBaseHandler import Database
 
 class consumer:
     def __init__(self):
         self.orchestrator = ApiHandler()
+        self.S3Algorithm = S3Orchestrator()
+        self.Database = Database()
         credentials = pika.PlainCredentials('admin', '123456')
         self.parameters = pika.ConnectionParameters('192.168.145.128', 5672, '/', credentials)
 
@@ -21,7 +25,10 @@ class consumer:
     def callback(self, ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
         message = body.decode("utf-8")
-        print(self.orchestrator.SendLogToOrchestration(message))
+        queue_name = self.orchestrator.SendLogToOrchestration(message)
+        preview = self.orchestrator.get_queue_items(queue_name)
+        (terashhold,k) = self.Database.select_from_resault(message, preview)
+        self.S3Algorithm.Run_S3_Orchestrator(preview,terashhold,k)
         #print("this message is in callback: ", message)
         #print("this message type in callback: ", type(message))
         #print(lemmatize_word(message.splitlines()[0]))
